@@ -1,50 +1,55 @@
 from art import logo
 import random
 
-# Print the game logo
-print(logo)
-print("Welcome to the Number Guessing Game ")
+def initialize_game():
+    """Initialize the game settings and return the target number"""
+    print(logo)
+    print("Welcome to the Number Guessing Game!")
+    print("I am thinking of a number between 1 and 100")
+    return random.randint(1, 100)
 
-# Generate a random number between 1 and 100
-random_num = random.randint(1, 100)
-print(random_num)  # For debugging purposes, print the random number
-remaining_attempts = 0
-print("I am thinking of a number between 1 and 100 ")
+def get_difficulty():
+    """Get difficulty level from user and return number of attempts"""
+    difficulty = input("Choose difficulty. Type 'easy' or 'hard': ").lower()
+    if difficulty == "easy":
+        return 10
+    elif difficulty == "hard":
+        return 5
+    else:
+        print("Invalid input. Defaulting to hard mode.")
+        return 5
 
-# Ask the user to choose a difficulty level
-diff_level = input("Choose the difficulty level. Type 'easy' or 'hard': ")
-
-# Set the number of attempts based on the chosen difficulty level
-if diff_level == "easy":
-    remaining_attempts = 10
-elif diff_level == "hard":
-    remaining_attempts = 5
-else:
-    print("You entered an invalid input")
-
-# Function to compare the user's guess with the random number
-def compare_number(user_guess):
-    if user_guess == random_num:
+def check_guess(guess, target):
+    """Compare guess with target number and return appropriate message"""
+    if guess == target:
         return "You guessed the right number! You win!"
-    elif user_guess > random_num:
-        return "Too high"
-    elif user_guess < random_num:
-        return "Too low"
+    return "Too high" if guess > target else "Too low"
 
-# Loop until the user runs out of attempts
-while remaining_attempts != 0:
-    print(f"You have {remaining_attempts} attempts remaining to guess the number")
-    guess = int(input("Make a guess: "))
-    remaining_attempts -= 1  # Decrease the number of attempts by 1
-    compared_result = compare_number(guess)
+def play_game():
+    """Main game loop"""
+    target_number = initialize_game()
+    attempts = get_difficulty()
     
-    if compared_result == "You guessed the right number! You win!":
-        print(compared_result)
-        break  # Exit the loop if the user guessed the correct number
-    else:
-        print(compared_result)
+    while attempts > 0:
+        print(f"\nYou have {attempts} attempts remaining to guess the number")
+        
+        try:
+            guess = int(input("Make a guess: "))
+            result = check_guess(guess, target_number)
+            print(result)
+            
+            if result == "You guessed the right number! You win!":
+                return
+            
+            attempts -= 1
+            if attempts > 0:
+                print("Guess again")
+        except ValueError:
+            print("Please enter a valid number!")
+            continue
     
-    if remaining_attempts != 0:
-        print("Guess again")
-    else:
-        print("Game over")
+    print("\nGame Over! You've run out of attempts")
+    print(f"The number was {target_number}")
+
+if __name__ == "__main__":
+    play_game()
